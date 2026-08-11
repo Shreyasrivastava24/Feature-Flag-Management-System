@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const pool = require('./config/db');
 const { authMiddleware } = require('./middleware/auth');
+const redisClient = require('./config/redis');
 
 const app = express();
 
@@ -12,6 +13,9 @@ app.use(express.json());
 app.get('/api/protected', authMiddleware, (req, res) => {
   res.json({ message: 'You accessed a protected route!', user: req.user });
 });
+
+const auditRoutes = require('./routes/audit');
+app.use('/api/audit-logs', auditRoutes);
 
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);

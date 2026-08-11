@@ -1,3 +1,4 @@
+const redisClient = require('../config/redis');
 const express = require('express');
 const pool = require('../config/db');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
@@ -8,7 +9,6 @@ router.post('/', authMiddleware, adminOnly, async (req, res) => {
   try {
     const { key, description, is_enabled, rollout_percentage } = req.body;
 
-    // Basic validation
     if (!key) {
       return res.status(400).json({ error: 'Flag key is required' });
     }
@@ -19,10 +19,19 @@ router.post('/', authMiddleware, adminOnly, async (req, res) => {
       [key, description || '', is_enabled || false, rollout_percentage || 0, req.user.id]
     );
 
-    res.status(201).json(result.rows[0]);
+    const newFlag = result.rows[0];
+
+    // Log this action
+    await pool.query(
+      `INSERT INTO audit_logs (flag_id, action, changed_by, changes)
+       VALUES ($1, $2, $3, $4)`,
+      [newFlag.id, 'create', req.user.id, JSON.stringify(newFlag)]
+    );
+
+    res.status(201).json(newFlag);
   } catch (err) {
     console.error(err);
-    if (err.code === '23505') { // Postgres unique violation code
+    if (err.code === '23505') {
       return res.status(400).json({ error: 'A flag with this key already exists' });
     }
     res.status(500).json({ error: 'Server error, try again later' });
@@ -58,7 +67,23 @@ router.put('/:id', authMiddleware, adminOnly, async (req, res) => {
       return res.status(404).json({ error: 'Flag not found' });
     }
 
-    res.json(result.rows[0]);
+    const updatedFlag = result.rows[0];
+
+    // Clear all cached entries for this flag (across all users)
+    const flagKey = updatedFlag.key;
+    const keysToDelete = await redisClient.keys(`flag:${flagKey}:*`);
+    if (keysToDelete.length > 0) {
+      await redisClient.del(keysToDelete);
+    }
+
+    // Log this action
+    await pool.query(
+      `INSERT INTO audit_logs (flag_id, action, changed_by, changes)
+       VALUES ($1, $2, $3, $4)`,
+      [updatedFlag.id, 'update', req.user.id, JSON.stringify({ description, is_enabled, rollout_percentage })]
+    );
+
+    res.json(updatedFlag);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error, try again later' });
@@ -76,10 +101,27 @@ router.delete('/:id', authMiddleware, adminOnly, async (req, res) => {
       return res.status(404).json({ error: 'Flag not found' });
     }
 
-    res.json({ message: 'Flag deleted successfully', flag: result.rows[0] });
+    const deletedFlag = result.rows[0];
+
+    // Clear all cached entries for this flag
+    const flagKey = deletedFlag.key;
+    const keysToDelete = await redisClient.keys(`flag:${flagKey}:*`);
+    if (keysToDelete.length > 0) {
+      await redisClient.del(keysToDelete);
+    }
+
+    // Log this action
+    await pool.query(
+      `INSERT INTO audit_logs (flag_id, action, changed_by, changes)
+       VALUES ($1, $2, $3, $4)`,
+      [null, 'delete', req.user.id, JSON.stringify(deletedFlag)]
+    );
+
+    res.json({ message: 'Flag deleted successfully', flag: deletedFlag });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error, try again later' });
   }
 });
+
 module.exports = router;
