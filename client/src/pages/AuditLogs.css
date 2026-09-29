@@ -1,0 +1,168 @@
+.audit-page {
+  min-height: 100vh;
+  background: #BDDDFC;
+  color: #384959;
+  padding: 50px 20px;
+}
+.audit-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+/* ================= HEADER ================= */
+.audit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  gap: 20px;
+}
+.page-tag {
+  color: #6A89A7;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.audit-header h1 {
+  font-size: 36px;
+  margin: 0;
+  color: #384959;
+}
+.page-description {
+  color: #6A89A7;
+  margin-top: 8px;
+}
+/* ================= BACK BUTTON ================= */
+.back-btn {
+  text-decoration: none;
+  color: white;
+  background: #384959;
+  border: 1px solid #384959;
+  padding: 12px 18px;
+  border-radius: 10px;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+.back-btn:hover {
+  background: #6A89A7;
+  border-color: #6A89A7;
+}
+/* ================= ERROR ================= */
+.error-message {
+  background: #fff0f0;
+  border: 1px solid #e8a3a3;
+  color: #a94444;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+/* ================= TABLE CARD ================= */
+.audit-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(56, 73, 89, 0.12);
+}
+.table-wrapper {
+  overflow-x: auto;
+}
+/* ================= TABLE ================= */
+.audit-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.audit-card th {
+  background: #384959;
+  color: white;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: left;
+  padding: 18px;
+}
+.audit-card td {
+  padding: 18px;
+  border-top: 1px solid #e2edf7;
+  color: #384959;
+}
+.audit-card tr {
+  transition: 0.2s;
+}
+.audit-card tbody tr:hover {
+  background: #f5faff;
+}
+/* ================= DATE ================= */
+.date-cell {
+  color: #6A89A7;
+  font-size: 14px;
+}
+/* ================= ACTION BADGE ================= */
+.action-badge {
+  display: inline-block;
+  background: #eaf4ff;
+  color: #384959;
+  border: 1px solid #88BDF2;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+/* ================= USER ================= */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: #6A89A7;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+/* ================= CHANGES ================= */
+.changes-box {
+  margin: 0;
+  padding: 10px;
+  background: #f7fbff;
+  border: 1px solid #BDDDFC;
+  border-radius: 8px;
+  color: #6A89A7;
+  font-size: 12px;
+  max-width: 300px;
+  overflow-x: auto;
+}
+/* ================= EMPTY STATE ================= */
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  color: #6A89A7;
+}
+.empty-state span {
+  font-size: 35px;
+}
+.empty-state p {
+  margin-top: 10px;
+}
+/* ================= MOBILE ================= */
+@media (max-width: 700px) {
+  .audit-page {
+    padding: 30px 15px;
+  }
+  .audit-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .audit-header h1 {
+    font-size: 28px;
+  }
+  .back-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

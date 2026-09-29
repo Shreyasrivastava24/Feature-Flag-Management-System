@@ -33,19 +33,22 @@ router.post('/signup', async (req, res) => {
 
 
 router.post('/login', async (req, res) => {
+  console.log("🔥 LOGIN ROUTE HIT");
   try {
     const { email, password } = req.body;
 
     // 1. Find user by email
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
-
+    console.log("LOGIN EMAIL:", email);
+    console.log("USER FOUND:", !!user);
     if (!user) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
     // 2. Compare entered password with stored hash
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log("PASSWORD MATCH:", isMatch);
     if (!isMatch) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }

@@ -14,6 +14,9 @@ app.get('/api/protected', authMiddleware, (req, res) => {
   res.json({ message: 'You accessed a protected route!', user: req.user });
 });
 
+const clientAppRoutes = require('./routes/Clientapps');
+app.use('/api/client-apps', clientAppRoutes);
+
 const auditRoutes = require('./routes/audit');
 app.use('/api/audit-logs', auditRoutes);
 
@@ -30,11 +33,8 @@ app.get('/', (req, res) => {
   res.send('Feature Flag API is running');
 });
 
-app.get('/api/protected', authMiddleware, (req, res) => {
-  res.json({ message: 'You accessed a protected route!', user: req.user });
-});
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
